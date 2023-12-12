@@ -9,6 +9,8 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       default: "open",
     },
+    text: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
+    createdAt: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
   },
   {
     timestamps: true,
