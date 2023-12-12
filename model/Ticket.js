@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const ticketStatusEnum = require("./../utils/enum");
 const ticketSchema = new mongoose.Schema(
   {
     id: String,
@@ -7,7 +7,8 @@ const ticketSchema = new mongoose.Schema(
     description: String,
     status: {
       type: String,
-      default: "open",
+      enum: Object.values(ticketStatusEnum),
+      default: ticketStatusEnum.OPEN,
     },
     text: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
     createdAt: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
