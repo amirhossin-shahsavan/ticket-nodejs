@@ -1,4 +1,3 @@
-const bcrypt = require("bcrypt");
 const generateToken = require("./../utils/generateToken");
 const User = require("../model/User");
 
@@ -6,17 +5,15 @@ const registerUser = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
 
   const userFound = await User.findOne({ email });
-  if (!userFound) {
+  if (userFound) {
     return next(appErr("User Already Exist", 500));
   }
-  const salt = await bcrypt.genSalt(10);
-  const hashedpass = await bcrypt.hash(password, salt);
 
   const user = await User.create({
     firstname,
     lastname,
     email,
-    password: hashedpass,
+    password: password,
   });
   res.json({
     status: "success",
@@ -26,13 +23,12 @@ const registerUser = async (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-  userFound = await User.findOne({ email });
+  const userFound = await User.findOne({ email });
   if (!userFound) {
     return next(appErr("email or password wrong", 500));
   }
-
-  const isPasswordMatch = await bcrypt.compare(password, userFound.password);
-  if (!isPasswordMatch) {
+  var isok = await userFound.ComparePasssword(password, userFound.password);
+  if (!isok) {
     return next(appErr("invalid login credentional", 500));
   }
   res.json({
