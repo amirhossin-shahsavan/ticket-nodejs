@@ -1,36 +1,37 @@
+const { default: mongoose } = require("mongoose");
 const Message = require("./../model/Message");
 const Ticket = require("./../model/Ticket");
 const appErr = require("./../utils/errHandler");
-const getMessages = async (req, res) => {
+var ObjectId = require("mongodb").ObjectId;
+const getMessages = async (req, res, next) => {
   try {
-    const { text, createdAt } = await Ticket.findById(req.params.id);
+    const message = await Message.find({
+      ticketid: new ObjectId(req.params.id),
+    })
+      .sort({ createdAt: -1 })
+      .exec();
+
+    // const { text, createdAt } = await Ticket.findById(req.params.id);
     res.json({
       status: "success",
-      data: { text, createdAt },
+      data: {
+        list: message,
+      },
     });
   } catch (error) {
     next(appErr(error.message));
   }
 };
 
-// const getallmessage = async (req, res) => {
-//   try {
-//     const { text, createdAt} = await Ticket.find();
-//     res.json({
-//       status: "success",
-//       data: ticketCreated,
-//     });
-//   } catch (error) {
-//     next(appErr(error.message));
-//   }
-// };
-
-const createMessage = async (req, res) => {
+const createMessage = async (req, res, next) => {
   try {
     const ticket = await Ticket.findById(req.params.id);
-    const newMessage = new Message(req.body);
-    ticket.text.push(newMessage);
-    await ticket.save();
+    const newMessage = await new Message({
+      text: req.body.text,
+      ticketid: new ObjectId(req.params.id),
+    }).save();
+    ticket.text = newMessage._id;
+    await Ticket.updateOne({ _id: ticket._id }, { text: newMessage._id });
 
     res.json({
       status: "success",
