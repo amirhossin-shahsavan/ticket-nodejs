@@ -1,8 +1,9 @@
 const express = require("express");
 const app = express();
-
+require("./config/dbConnet");
 const ticketRoutes = require("./routes/ticketRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const dotenv = require("dotenv").config();
 
 app.use(express.json());
 

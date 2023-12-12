@@ -7,6 +7,6 @@ const messageRoutes = express.Router();
 
 messageRoutes.get("/:id", getMessages);
 
-messageRoutes.post("/", createMessage);
+messageRoutes.post("/:id", createMessage);
 
 module.exports = messageRoutes;

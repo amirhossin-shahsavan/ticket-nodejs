@@ -10,8 +10,7 @@ const ticketSchema = new mongoose.Schema(
       enum: Object.values(ticketStatusEnum),
       default: ticketStatusEnum.OPEN,
     },
-    text: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
-    createdAt: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
+    text: { type: mongoose.Schema.Types.ObjectId, ref: "newTicket" },
   },
   {
     timestamps: true,
