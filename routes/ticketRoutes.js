@@ -1,35 +1,22 @@
 const express = require("express");
+const {
+  getallTicket,
+  getTicket,
+  createTicket,
+  updateTicket,
+  deleteTicket,
+} = require("../controller/ticketCtrl");
 
 const ticketRoutes = express.Router();
 
-ticketRoutes.get("/", (req, res) => {
-  res.json({
-    data: "tickek resive all",
-  });
-});
+ticketRoutes.get("/", getallTicket);
 
-ticketRoutes.get("/:id", (req, res) => {
-  res.json({
-    data: "tickek resive once",
-  });
-});
+ticketRoutes.get("/:id", getTicket);
 
-ticketRoutes.post("/", (req, res) => {
-  res.json({
-    data: "tickek created",
-  });
-});
+ticketRoutes.post("/", createTicket);
 
-ticketRoutes.put("/:id", (req, res) => {
-  res.json({
-    data: "tickek updated",
-  });
-});
+ticketRoutes.put("/:id", updateTicket);
 
-ticketRoutes.delete("/:id", (req, res) => {
-  res.json({
-    data: "tickek deleted",
-  });
-});
+ticketRoutes.delete("/:id", deleteTicket);
 
 module.exports = ticketRoutes;
