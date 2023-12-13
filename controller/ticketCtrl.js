@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const Ticket = require("./../model/Ticket");
 const Message = require("./../model/Message");
 const appErr = require("./../utils/errHandler");
+const User = require("../model/User");
 const getTicket = async (req, res, next) => {
   try {
     const tickets = await Ticket.findById(req.params.id);
@@ -22,9 +23,12 @@ const getallTicket = async (req, res, next) => {
 const createTicket = async (req, res, next) => {
   const { title, description } = req.body;
   try {
+    const userFound = await User.findById(req.userAuth);
+
     const ticketCreated = await Ticket.create({
       title,
       description,
+      sender: [userFound.email, userFound.role],
     });
 
     res.json({
@@ -40,7 +44,7 @@ var ObjectId = require("mongodb").ObjectId;
 
 const updateTicket = async (req, res, next) => {
   try {
-    console.log(new ObjectId(req.params.id), req.body);
+    // console.log(new ObjectId(req.params.id), req.body);
     var updated = await Ticket.updateOne(
       { _id: new ObjectId(req.params.id) },
       req.body

@@ -13,6 +13,7 @@ const messageSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  sender: [String],
 });
 
 const Message = mongoose.model("newTicket", messageSchema);

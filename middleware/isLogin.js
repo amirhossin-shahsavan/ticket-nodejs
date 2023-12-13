@@ -8,6 +8,7 @@ const isLogin = (req, res, next) => {
   const decodedUser = verifyToken(token);
 
   req.userAuth = decodedUser.id;
+
   if (!decodedUser) {
     return next(appErr("invalid/Expire token , please login again"));
   } else {
