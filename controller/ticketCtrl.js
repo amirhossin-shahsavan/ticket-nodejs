@@ -5,6 +5,7 @@ const appErr = require("./../utils/errHandler");
 const User = require("../model/User");
 const fs = require("fs");
 const path = require("path");
+var ObjectId = require("mongodb").ObjectId;
 
 const getTicket = async (req, res, next) => {
   try {
@@ -12,6 +13,10 @@ const getTicket = async (req, res, next) => {
       _id: new ObjectId(req.params.id),
       user: req.userAuth,
     });
+    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    if (!ticketFound) {
+      return next(appErr("not found", 404));
+    }
     if (!tickets) {
       return next(appErr("you dont have access", 401));
     }
@@ -50,7 +55,6 @@ const createTicket = async (req, res, next) => {
   }
 };
 
-var ObjectId = require("mongodb").ObjectId;
 
 const updateTicket = async (req, res, next) => {
   try {
@@ -58,8 +62,12 @@ const updateTicket = async (req, res, next) => {
       { _id: new ObjectId(req.params.id), user: req.userAuth },
       req.body
     );
+    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    if (!ticketFound) {
+      return next(appErr("not found", 404));
+    }
     if (!updated) {
-      return next(appErr("Ticket not found"), 401);
+      return next(appErr("you dont have access"), 401);
     } else {
       res.json({
         status: "success",
@@ -77,18 +85,21 @@ const deleteTicket = async (req, res, next) => {
       id_: req.params.id,
       user: req.userAuth,
     });
+    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    if (!ticketFound) {
+      return next(appErr("not found", 404));
+    }
+
     if (!deleteTicket) {
       next(appErr("you dont have access", 401));
     }
+
     await Message.deleteMany({ ticketid: new ObjectId(req.params.id) });
-    if (!deletedTicket && deletedMessage) {
-      return next(appErr("Ticket not found"));
-    } else {
-      res.json({
-        status: "success",
-        data: "you have successfully delete ticket",
-      });
-    }
+
+    res.json({
+      status: "success",
+      data: "you have successfully delete ticket",
+    });
   } catch (error) {
     next(appErr(error.message));
   }
@@ -97,7 +108,7 @@ const deleteTicket = async (req, res, next) => {
 const uploadfile = async (req, res, next) => {
   try {
     const newMsg = await new Message({
-      ticketid: new ObjectId(req.params.id), //req.params.id is message id
+      ticketid: new ObjectId(req.params.id),
       text: "image sent",
       type: "image",
       user: req.userAuth,
@@ -128,13 +139,27 @@ const uploadfile = async (req, res, next) => {
 };
 
 const getFile = async (req, res, next) => {
-  const msgid = req.params.id;
-  msgid = new ObjectId(msgid);
-  var msgFind = await Message.findOne({ user: req.userAuth, _id: msgid });
-  if (!msgFind) {
-    next(appErr("you dont have access", 401));
+  try {
+    // problem => how add 404 status
+    const msgid = new ObjectId(req.params.id);
+    const msgFind = await Message.findOne({ user: req.userAuth, _id: msgid });
+
+    const flileFound = await Message.findOne({ _id: msgid });
+    if (!flileFound) {
+      return next(appErr("not found", 404));
+    }
+    if (!msgFind) {
+      return next(appErr("you dont have access", 401));
+    }
+    const address = path.join(
+      __dirname,
+      "../files/upload/",
+      req.params.id + ".png"
+    );
+    res.sendFile(address);
+  } catch (error) {
+    next(appErr(error.message));
   }
-  res.sendfile("../files/upload/" + req.params.id + ".png");
 };
 
 module.exports = {
