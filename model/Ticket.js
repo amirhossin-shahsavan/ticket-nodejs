@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const ticketStatusEnum = require("./../utils/enum");
 const ticketSchema = new mongoose.Schema(
   {
-    id: String,
     title: String,
     description: String,
     status: {
@@ -12,6 +11,11 @@ const ticketSchema = new mongoose.Schema(
     },
     text: { type: mongoose.Schema.Types.ObjectId, ref: "newTicket" },
     sender: [String],
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    file: [(fname = String)],
   },
   {
     timestamps: true,

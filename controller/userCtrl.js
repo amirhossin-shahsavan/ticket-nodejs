@@ -14,7 +14,7 @@ const registerUser = async (req, res, next) => {
     lastname,
     email,
     password: password,
-    role: "user",
+    isAdmin: false,
   });
   res.json({
     status: "success",

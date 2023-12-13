@@ -5,6 +5,8 @@ const {
   createTicket,
   updateTicket,
   deleteTicket,
+  uploadfile,
+  getFile,
 } = require("../controller/ticketCtrl");
 
 const islogin = require("./../middleware/isLogin");
@@ -17,6 +19,10 @@ ticketRoutes.get("/", islogin, getallTicket);
 ticketRoutes.get("/:id", islogin, getTicket);
 
 ticketRoutes.post("/", islogin, createTicket);
+
+ticketRoutes.post("/upload/:id", islogin, uploadfile);
+
+ticketRoutes.get("/image/:id", islogin, getFile);
 
 ticketRoutes.put("/:id", isAdmin, updateTicket);
 

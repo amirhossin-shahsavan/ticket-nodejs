@@ -5,9 +5,17 @@ const messageSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Ticket",
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   text: {
     type: String,
-    required: true,
+  },
+  type: {
+    type: String,
+    default: "text",
+    enum: ["text", "image"],
   },
   createdAt: {
     type: Date,
