@@ -37,14 +37,13 @@ const createMessage = async (req, res, next) => {
     if (!ticket) {
       return next(appErr("you dont have access", 401));
     }
-    console.log(req.body);
     const userFound = await User.findById(req.userAuth);
 
     const newMessage = await new Message({
       text: req.body.text,
       ticketid: new ObjectId(req.params.id),
-      sender: [userFound.email, userFound.role],
       user: req.userAuth,
+      isAdmin: userFound.isAdmin,
     }).save();
 
     await Ticket.updateOne(

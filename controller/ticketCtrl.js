@@ -35,13 +35,10 @@ const getallTicket = async (req, res, next) => {
 const createTicket = async (req, res, next) => {
   const { title, description } = req.body;
   try {
-    const userFound = await User.findById(req.userAuth);
-
     const ticketCreated = await Ticket.create({
       title,
       description,
       user: req.userAuth,
-      sender: [userFound.email, userFound.role],
     });
 
     res.json({

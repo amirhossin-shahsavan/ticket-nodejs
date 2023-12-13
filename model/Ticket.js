@@ -10,12 +10,10 @@ const ticketSchema = new mongoose.Schema(
       default: ticketStatusEnum.OPEN,
     },
     text: { type: mongoose.Schema.Types.ObjectId, ref: "newTicket" },
-    sender: [String],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    file: [(fname = String)],
   },
   {
     timestamps: true,

@@ -12,7 +12,7 @@ const isAdmin = async (req, res, next) => {
 
   const user = await User.findById(decodedUser.id);
 
-  if ((user.isAdmin = true)) {
+  if ((user.isAdmin == true)) {
     return next();
   } else {
     next(appErr("access denied", 403));
