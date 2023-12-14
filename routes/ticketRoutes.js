@@ -24,8 +24,8 @@ ticketRoutes.post("/upload/:id", islogin, uploadfile);
 
 ticketRoutes.get("/image/:id", islogin, getFile);
 
-ticketRoutes.put("/:id", isAdmin, updateTicket);
+ticketRoutes.put("/:id", islogin, isAdmin, updateTicket);
 
-ticketRoutes.delete("/:id", isAdmin, deleteTicket);
+ticketRoutes.delete("/:id", islogin, deleteTicket);
 
 module.exports = ticketRoutes;

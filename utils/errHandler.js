@@ -1,8 +1,8 @@
 const appErr = (message, statusCode) => {
-  let error = new Error(message);
-  error.statusCode = statusCode ? statusCode : 500;
-  error.stack = error.stack;
-  return error;
+  return {
+    code: statusCode * -1,
+    msg: message,
+  };
 };
 
 module.exports = appErr;
