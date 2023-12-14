@@ -12,6 +12,7 @@ const getTicket = async (req, res, next) => {
     const tickets = await Ticket.findOne({
       _id: new ObjectId(req.params.id),
       user: req.userAuth,
+      is_deletet: false,
     });
     const ticketFound = await Ticket.findOne({ _id: req.params.id });
     if (!ticketFound) {
@@ -27,7 +28,10 @@ const getTicket = async (req, res, next) => {
 };
 const getallTicket = async (req, res, next) => {
   try {
-    const tickets = await Ticket.find({ user: req.userAuth }).populate("text");
+    const tickets = await Ticket.find({
+      user: req.userAuth,
+      is_deletet: false,
+    }).populate("text");
     if (!tickets) {
       return next(appErr("you dont have access", 401));
     }
@@ -58,11 +62,19 @@ const createTicket = async (req, res, next) => {
 const updateTicket = async (req, res, next) => {
   try {
     const updated = await Ticket.updateOne(
-      { _id: new ObjectId(req.params.id), user: req.userAuth },
+      {
+        _id: new ObjectId(req.params.id),
+        user: req.userAuth,
+        is_deletet: false,
+      },
       req.body
     );
-    
-    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+
+    const ticketFound = await Ticket.findOne({
+      _id: req.params.id,
+      is_deletet: false,
+    });
+
     if (!ticketFound) {
       return next(appErr("not found", 404));
     }
@@ -82,11 +94,16 @@ const updateTicket = async (req, res, next) => {
 
 const deleteTicket = async (req, res, next) => {
   try {
-    const deletedTicket = await Ticket.deleteOne({
+    const deletedTicket = await Ticket.updateOne({
       id_: req.params.id,
       user: req.userAuth,
+      is_deletet: true,
     });
-    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+
+    const ticketFound = await Ticket.findOne({
+      _id: req.params.id,
+      is_deletet: false,
+    });
     if (!ticketFound) {
       return next(appErr("not found", 404));
     }
@@ -95,7 +112,7 @@ const deleteTicket = async (req, res, next) => {
       next(appErr("you dont have access", 401));
     }
 
-    await Message.deleteMany({ ticketid: new ObjectId(req.params.id) });
+    // await Message.deleteMany({ ticketid: new ObjectId(req.params.id) });
 
     res.json({
       status: "success",
@@ -108,7 +125,10 @@ const deleteTicket = async (req, res, next) => {
 
 const uploadfile = async (req, res, next) => {
   try {
-    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    const ticketFound = await Ticket.findOne({
+      _id: req.params.id,
+      is_deletet: false,
+    });
     if (!ticketFound) {
       return next(appErr("not found", 404));
     }
@@ -116,6 +136,7 @@ const uploadfile = async (req, res, next) => {
     const ticketAuthFound = await Ticket.findOne({
       _id: req.params.id,
       user: req.userAuth,
+      is_deletet: false,
     });
 
     if (!ticketAuthFound) {
@@ -130,7 +151,7 @@ const uploadfile = async (req, res, next) => {
     }).save();
 
     await Ticket.updateOne(
-      { _id: new ObjectId(req.params.id) },
+      { _id: new ObjectId(req.params.id), is_deletet: false },
       { text: newMsg._id }
     );
 
