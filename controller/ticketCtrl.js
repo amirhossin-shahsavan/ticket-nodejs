@@ -16,14 +16,14 @@ const getTicket = async (req, res, next) => {
     });
     const ticketFound = await Ticket.findOne({ _id: req.params.id });
     if (!ticketFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
     if (!tickets) {
-      return next(appErr("you dont have access", 401));
+      return res.status(401).json(appErr("you dont have access", 401));
     }
     res.json(tickets);
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 const getallTicket = async (req, res, next) => {
@@ -33,11 +33,11 @@ const getallTicket = async (req, res, next) => {
       is_deletet: false,
     }).populate("text");
     if (!tickets) {
-      return next(appErr("you dont have access", 401));
+      return res.status(401).json(appErr("you dont have access", 401));
     }
     res.json(tickets);
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
@@ -76,11 +76,11 @@ const updateTicket = async (req, res, next) => {
     });
 
     if (!ticketFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
 
     if (!updated) {
-      return next(appErr("you dont have access"), 401);
+      return res.status(401).json(appErr("you dont have access"), 401);
     } else {
       res.json({
         status: "success",
@@ -88,7 +88,7 @@ const updateTicket = async (req, res, next) => {
       });
     }
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
@@ -105,11 +105,11 @@ const deleteTicket = async (req, res, next) => {
       is_deletet: false,
     });
     if (!ticketFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
 
     if (!deletedTicket) {
-      next(appErr("you dont have access", 401));
+      res.status(401).json(appErr("you dont have access", 401));
     }
 
     // await Message.deleteMany({ ticketid: new ObjectId(req.params.id) });
@@ -119,7 +119,7 @@ const deleteTicket = async (req, res, next) => {
       data: "you have successfully delete ticket",
     });
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
@@ -130,7 +130,7 @@ const uploadfile = async (req, res, next) => {
       is_deletet: false,
     });
     if (!ticketFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
 
     const ticketAuthFound = await Ticket.findOne({
@@ -140,7 +140,7 @@ const uploadfile = async (req, res, next) => {
     });
 
     if (!ticketAuthFound) {
-      return next(appErr("dont have access", 401));
+      return res.status(404).json(appErr("dont have access", 401));
     }
 
     const newMsg = await new Message({
@@ -171,7 +171,7 @@ const uploadfile = async (req, res, next) => {
       data: "File uploaded and attached to ticket!",
     });
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
@@ -182,10 +182,10 @@ const getFile = async (req, res, next) => {
 
     const flileFound = await Message.findOne({ _id: msgid });
     if (!flileFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
     if (!msgFind) {
-      return next(appErr("you dont have access", 401));
+      return res.status(401).json(appErr("you dont have access", 401));
     }
     const address = path.join(
       __dirname,
@@ -194,7 +194,7 @@ const getFile = async (req, res, next) => {
     );
     res.sendFile(address);
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
