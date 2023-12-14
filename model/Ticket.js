@@ -9,10 +9,14 @@ const ticketSchema = new mongoose.Schema(
       enum: Object.values(ticketStatusEnum),
       default: ticketStatusEnum.OPEN,
     },
-    text: { type: mongoose.Schema.Types.ObjectId, ref: "newTicket" },
+    text: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    is_deletet: {
+      type: Boolean,
+      default: false,
     },
   },
   {
