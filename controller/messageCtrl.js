@@ -11,15 +11,16 @@ const getMessages = async (req, res, next) => {
     const message = await Message.find({
       ticketid: new ObjectId(req.params.id),
       user: req.userAuth,
+      is_deletet: false,
     })
       .sort({ createdAt: -1 })
       .exec();
     const messageFound = await Message.findOne({ _id: req.params.id });
     if (!messageFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
     if (!message) {
-      return next(appErr("you dont have access", 401));
+      return res.status(401).json(appErr("you dont have access", 401));
     }
     res.json({
       status: "success",
@@ -38,22 +39,25 @@ const createMessage = async (req, res, next) => {
       _id: new ObjectId(req.params.id),
       user: req.userAuth,
     });
+    console.log(ticket);
 
-    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    const ticketFound = await Ticket.findOne({
+      _id: req.params.id,
+      is_deletet: false,
+    });
 
     if (!ticketFound) {
-      return next(appErr("not found", 404));
+      return res.status(404).json(appErr("not found", 404));
     }
     if (!ticket) {
-      return next(appErr("you dont have access", 401));
+      return res.status(401).json(appErr("you dont have access", 401));
     }
-    const userFound = await User.findById(req.userAuth);
 
     const newMessage = await new Message({
       text: req.body.text,
       ticketid: new ObjectId(req.params.id),
       user: req.userAuth,
-      isAdmin: userFound.isAdmin,
+      sender: req.user.permission,
     }).save();
 
     await Ticket.updateOne(
