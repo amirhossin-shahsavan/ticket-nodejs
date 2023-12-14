@@ -1,10 +1,12 @@
 const generateToken = require("./../utils/generateToken");
 const User = require("../model/User");
+const appErr = require("../utils/errHandler");
 
 const registerUser = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;
 
   const userFound = await User.findOne({ email });
+
   if (userFound) {
     return next(appErr("User Already Exist", 500));
   }

@@ -61,10 +61,12 @@ const updateTicket = async (req, res, next) => {
       { _id: new ObjectId(req.params.id), user: req.userAuth },
       req.body
     );
+    
     const ticketFound = await Ticket.findOne({ _id: req.params.id });
     if (!ticketFound) {
       return next(appErr("not found", 404));
     }
+
     if (!updated) {
       return next(appErr("you dont have access"), 401);
     } else {
@@ -154,7 +156,6 @@ const uploadfile = async (req, res, next) => {
 
 const getFile = async (req, res, next) => {
   try {
-    // problem => how add 404 status
     const msgid = new ObjectId(req.params.id);
     const msgFind = await Message.findOne({ user: req.userAuth, _id: msgid });
 
