@@ -14,6 +14,10 @@ const getMessages = async (req, res, next) => {
     })
       .sort({ createdAt: -1 })
       .exec();
+    const messageFound = await Message.findOne({ _id: req.params.id });
+    if (!messageFound) {
+      return next(appErr("not found", 404));
+    }
     if (!message) {
       return next(appErr("you dont have access", 401));
     }
@@ -34,6 +38,12 @@ const createMessage = async (req, res, next) => {
       _id: new ObjectId(req.params.id),
       user: req.userAuth,
     });
+
+    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+
+    if (!ticketFound) {
+      return next(appErr("not found", 404));
+    }
     if (!ticket) {
       return next(appErr("you dont have access", 401));
     }
@@ -62,5 +72,5 @@ const createMessage = async (req, res, next) => {
 
 module.exports = {
   getMessages,
-  createMessag
+  createMessage,
 };

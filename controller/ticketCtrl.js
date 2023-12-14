@@ -55,7 +55,6 @@ const createTicket = async (req, res, next) => {
   }
 };
 
-
 const updateTicket = async (req, res, next) => {
   try {
     const updated = await Ticket.updateOne(
@@ -90,7 +89,7 @@ const deleteTicket = async (req, res, next) => {
       return next(appErr("not found", 404));
     }
 
-    if (!deleteTicket) {
+    if (!deletedTicket) {
       next(appErr("you dont have access", 401));
     }
 
@@ -107,12 +106,27 @@ const deleteTicket = async (req, res, next) => {
 
 const uploadfile = async (req, res, next) => {
   try {
+    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    if (!ticketFound) {
+      return next(appErr("not found", 404));
+    }
+
+    const ticketAuthFound = await Ticket.findOne({
+      _id: req.params.id,
+      user: req.userAuth,
+    });
+
+    if (!ticketAuthFound) {
+      return next(appErr("dont have access", 401));
+    }
+
     const newMsg = await new Message({
       ticketid: new ObjectId(req.params.id),
       text: "image sent",
       type: "image",
       user: req.userAuth,
     }).save();
+
     await Ticket.updateOne(
       { _id: new ObjectId(req.params.id) },
       { text: newMsg._id }

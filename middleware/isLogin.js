@@ -10,7 +10,7 @@ const isLogin = (req, res, next) => {
   req.userAuth = decodedUser.id;
 
   if (!decodedUser) {
-    return next(appErr("invalid/Expire token , please login again"));
+    return next(appErr("invalid/Expire token , please login again", 401));
   } else {
     next();
   }
