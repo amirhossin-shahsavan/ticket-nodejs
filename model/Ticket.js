@@ -10,7 +10,7 @@ const ticketSchema = new mongoose.Schema(
       default: ticketStatusEnum.OPEN,
     },
     text: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
-    type: { type: mongoose.Schema.Types.ObjectId, ref: "Type" },
+    category_Id: { type: mongoose.Schema.Types.ObjectId, ref: "Type" },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

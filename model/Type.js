@@ -2,14 +2,6 @@ const statusEnum = require("../utils/enum");
 const mongoose = require("mongoose");
 const ticketType = new mongoose.Schema(
   {
-    ticketid: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Ticket",
-    },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
     category: {
       type: String,
       enum: ["sales-lead", "customer-service-issue", "it-support-request"],
@@ -18,14 +10,9 @@ const ticketType = new mongoose.Schema(
       type: String,
       enum: ["sales", "customer-service", "it"],
     },
-    status: {
-      type: String,
-      enum: Object.values(statusEnum),
-      default: statusEnum.OPEN,
-    },
     priority: {
       type: String,
-      enum: ["low", "medium", "high", "urgent"],
+      enum: ["low", "medium", "high"],
       default: "low",
     },
   },

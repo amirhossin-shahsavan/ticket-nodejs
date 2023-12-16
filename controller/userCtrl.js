@@ -1,6 +1,6 @@
 const generateToken = require("./../utils/generateToken");
 const User = require("../model/User");
-const appErr = require("../utils/errHandler");
+const {appErr} = require("../utils/errHandler");
 
 const registerUser = async (req, res, next) => {
   const { firstname, lastname, email, password } = req.body;

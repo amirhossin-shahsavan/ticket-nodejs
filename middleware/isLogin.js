@@ -1,5 +1,5 @@
 const User = require("../model/User");
-const appErr = require("../utils/errHandler");
+const { appErr, AppErr } = require("../utils/errHandler");
 const getTokenFromHeader = require("../utils/getTokenFromHeader");
 const verifyToken = require("../utils/verifyToken");
 
@@ -8,7 +8,7 @@ const isLogin = async (req, res, next) => {
 
   const decodedUser = verifyToken(token);
   if (!decodedUser) {
-    return next(appErr("invalid/Expire token , please login again", 401));
+    next(AppErr("invalid/Expire token , please login again", 401));
   }
 
   req.userAuth = decodedUser.id;

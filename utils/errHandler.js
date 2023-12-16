@@ -5,4 +5,11 @@ const appErr = (message, statusCode) => {
   };
 };
 
-module.exports = appErr;
+const AppErr = (message, statusCode) => {
+  let error = new Error(message);
+  error.statusCode = statusCode ? statusCode : 500;
+  error.stack = error.stack;
+  return error;
+};
+
+module.exports = { appErr, AppErr };

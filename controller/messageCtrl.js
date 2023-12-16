@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Message = require("./../model/Message");
 const Ticket = require("./../model/Ticket");
-const appErr = require("./../utils/errHandler");
+const { appErr } = require("./../utils/errHandler");
 const User = require("../model/User");
 var ObjectId = require("mongodb").ObjectId;
 const expressFile = require("express-fileupload");
@@ -11,11 +11,10 @@ const getMessages = async (req, res, next) => {
     const message = await Message.find({
       ticketid: new ObjectId(req.params.id),
       user: req.userAuth,
-      is_deletet: false,
     })
       .sort({ createdAt: -1 })
       .exec();
-    const messageFound = await Message.findOne({ _id: req.params.id });
+    const messageFound = await Message.findOne({ ticketid: req.params.id });
     if (!messageFound) {
       return res.status(404).json(appErr("not found", 404));
     }
@@ -39,17 +38,17 @@ const createMessage = async (req, res, next) => {
       _id: new ObjectId(req.params.id),
       user: req.userAuth,
     });
-    console.log(ticket);
 
     const ticketFound = await Ticket.findOne({
       _id: req.params.id,
-      is_deletet: false,
+      status: "open",
     });
+    console.log(req.user.permission);
 
     if (!ticketFound) {
       return res.status(404).json(appErr("not found", 404));
     }
-    if (!ticket) {
+    if (!ticket && !req.user.permission == "support") {
       return res.status(401).json(appErr("you dont have access", 401));
     }
 
