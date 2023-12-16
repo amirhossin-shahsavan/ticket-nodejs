@@ -5,6 +5,7 @@ const appErr = require("./../utils/errHandler");
 const User = require("../model/User");
 const fs = require("fs");
 const path = require("path");
+const Type = require("../model/Type");
 var ObjectId = require("mongodb").ObjectId;
 
 const getTicket = async (req, res, next) => {
@@ -14,7 +15,10 @@ const getTicket = async (req, res, next) => {
       user: req.userAuth,
       is_deletet: false,
     });
-    const ticketFound = await Ticket.findOne({ _id: req.params.id });
+    const ticketFound = await Ticket.findOne({
+      _id: req.params.id,
+      is_deletet: false,
+    });
     if (!ticketFound) {
       return res.status(404).json(appErr("not found", 404));
     }
@@ -42,7 +46,7 @@ const getallTicket = async (req, res, next) => {
 };
 
 const createTicket = async (req, res, next) => {
-  const { title, description } = req.body;
+  const { title, description, category, department, priority } = req.body;
   try {
     const ticketCreated = await Ticket.create({
       title,
@@ -50,12 +54,25 @@ const createTicket = async (req, res, next) => {
       user: req.userAuth,
     });
 
+    const newCategory = await new Type({
+      ticketid: ticketCreated._id,
+      user: req.userAuth,
+      category: category,
+      department: department,
+      priority: priority,
+    }).save();
+
+    await Ticket.updateOne(
+      { _id: new ObjectId(req.params.id), is_deletet: false },
+      { type: newCategory._id }
+    );
+
     res.json({
       status: "success",
-      data: ticketCreated,
+      data: { ticketCreated, newCategory },
     });
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
@@ -140,7 +157,7 @@ const uploadfile = async (req, res, next) => {
     });
 
     if (!ticketAuthFound) {
-      return res.status(404).json(appErr("dont have access", 401));
+      return res.status(401).json(appErr("dont have access", 401));
     }
 
     const newMsg = await new Message({
