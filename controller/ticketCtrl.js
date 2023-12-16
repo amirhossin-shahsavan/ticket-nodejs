@@ -101,28 +101,36 @@ const updateTicket = async (req, res, next) => {
 
 const deleteTicket = async (req, res, next) => {
   try {
-    const deletedTicket = await Ticket.updateOne({
-      id_: req.params.id,
-      user: req.userAuth,
-      status: "closed",
-    });
+    if (req.user.permission == "support") {
+      return res.status(402).json(appErr("not permission", 402));
+    }
 
     const ticketFound = await Ticket.findOne({
       _id: req.params.id,
       status: "open",
     });
+
     if (!ticketFound) {
       return res.status(404).json(appErr("not found", 404));
     }
 
-    if (!deletedTicket) {
-      res.status(401).json(appErr("you dont have access", 401));
-    }
+    if (
+      (req.user.permission == "user" &&
+        ticketFound.user.toString() == req.user._id.toString()) ||
+      req.user.permission == "admin"
+    ) {
+      await Ticket.updateOne(
+        { _id: req.params.id, status: "open" },
+        { $set: { status: "closed" } }
+      );
 
-    res.json({
-      status: "success",
-      data: "you have successfully delete ticket",
-    });
+      res.json({
+        status: "success",
+        data: "you have successfully delete ticket",
+      });
+    } else {
+      return res.status(402).json(appErr("not permission", 402));
+    }
   } catch (error) {
     appErr(error.message);
   }

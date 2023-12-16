@@ -43,7 +43,6 @@ const createMessage = async (req, res, next) => {
       _id: req.params.id,
       status: "open",
     });
-    console.log(req.user.permission);
 
     if (!ticketFound) {
       return res.status(404).json(appErr("not found", 404));

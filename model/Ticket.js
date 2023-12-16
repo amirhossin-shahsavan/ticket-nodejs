@@ -6,18 +6,14 @@ const ticketSchema = new mongoose.Schema(
     description: String,
     status: {
       type: String,
-      enum: Object.values(ticketStatusEnum),
-      default: ticketStatusEnum.OPEN,
+      enum: ["open", "in progress", "resolved", "closed"],
+      default: "open",
     },
     text: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
     category_Id: { type: mongoose.Schema.Types.ObjectId, ref: "Type" },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-    },
-    is_deletet: {
-      type: Boolean,
-      default: false,
     },
   },
   {
