@@ -50,3 +50,5 @@ io.on("connection", (socket) => {
 server.listen(3000, () => {
   console.log("server run on 3000 port");
 });
+
+module.exports = app;

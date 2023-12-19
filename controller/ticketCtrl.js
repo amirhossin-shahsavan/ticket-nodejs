@@ -2,7 +2,6 @@ const { default: mongoose } = require("mongoose");
 const Ticket = require("./../model/Ticket");
 const Message = require("./../model/Message");
 const { appErr, AppErr } = require("./../utils/errHandler");
-const User = require("../model/User");
 const fs = require("fs");
 const path = require("path");
 const Type = require("../model/Type");
@@ -67,10 +66,6 @@ const createTicket = async (req, res, next) => {
       user: req.userAuth,
       category_Id: categoryid,
     });
-
-    console.log(
-      `ticketCreated.user.toString()... ${ticketCreated.user.toString()}`
-    );
 
     try {
       global.UsersSocket[ticketCreated.user.toString()].emit(

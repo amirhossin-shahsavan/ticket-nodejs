@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+// const { default: mongoose } = require("mongoose");
 const Message = require("./../model/Message");
 const Ticket = require("./../model/Ticket");
 const { appErr } = require("./../utils/errHandler");
