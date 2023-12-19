@@ -1,4 +1,4 @@
-const appErr = require("./errHandler");
+const {appErr} = require("./errHandler");
 
 const getTokenFromHeader = (req) => {
   const headerObj = req.headers;

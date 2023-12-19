@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const ticketStatusEnum = require("./../utils/enum");
+
 const ticketSchema = new mongoose.Schema(
   {
     title: String,

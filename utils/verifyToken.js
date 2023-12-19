@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const appErr = require("./errHandler");
+const {appErr} = require("./errHandler");
 const verifyToken = (token, next) => {
   if (token == false) {
     return false;

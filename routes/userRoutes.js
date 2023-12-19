@@ -5,6 +5,6 @@ const messageRoutes = express.Router();
 
 messageRoutes.post("/register", registerUser);
 
-messageRoutes.get("/login", loginUser);
+messageRoutes.post("/login", loginUser);
 
 module.exports = messageRoutes;

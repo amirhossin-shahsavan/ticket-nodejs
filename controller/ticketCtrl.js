@@ -10,22 +10,29 @@ var ObjectId = require("mongodb").ObjectId;
 
 const getTicket = async (req, res, next) => {
   try {
-    const tickets = await Ticket.findOne({
-      _id: new ObjectId(req.params.id),
-      user: req.userAuth,
-      status: "open",
-    });
     const ticketFound = await Ticket.findOne({
       _id: req.params.id,
       status: "open",
     });
+
+    const messageFound = await Message.find({
+      ticketid: req.params.id,
+    });
+
     if (!ticketFound) {
       return res.status(404).json(appErr("not found", 404));
     }
-    if (!tickets) {
+    if (
+      ticketFound.user.toString() != req.userAuth.toString() &&
+      req.user.permission == "user"
+    ) {
       return res.status(401).json(appErr("you dont have access", 401));
     }
-    res.json(tickets);
+
+    res.json({
+      status: "success",
+      data: { messageFound, ticketFound },
+    });
   } catch (error) {
     appErr(error.message);
   }
@@ -50,12 +57,29 @@ const getallTicket = async (req, res, next) => {
 const createTicket = async (req, res, next) => {
   const { title, description, categoryid } = req.body;
   try {
+    if (req.user.permission != "user") {
+      return res.status(401).json(appErr("you dont have access", 401));
+    }
+
     const ticketCreated = await Ticket.create({
       title,
       description,
       user: req.userAuth,
       category_Id: categoryid,
     });
+
+    console.log(
+      `ticketCreated.user.toString()... ${ticketCreated.user.toString()}`
+    );
+
+    try {
+      global.UsersSocket[ticketCreated.user.toString()].emit(
+        "newticket",
+        JSON.stringify(ticketCreated)
+      );
+    } catch {
+      appErr("new msg error ...");
+    }
 
     res.json({
       status: "success",

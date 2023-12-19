@@ -1,7 +1,13 @@
-const express = require("express");
 const expressFile = require("express-fileupload");
 
-const app = express();
+const express = require("express"),
+  http = require("http"),
+  socketIo = require("socket.io"),
+  app = express();
+
+var server = http.createServer(app);
+var io = socketIo(server);
+
 global.dotenv = require("dotenv").config().parsed;
 
 require("./config/dbConnet");
@@ -20,6 +26,27 @@ app.use("/api/v1/ticket", ticketRoutes);
 
 app.use("/api/v1/user", userRoutes);
 
-app.listen(3000, () => {
+const verifyToken = require("./utils/verifyToken");
+
+global.UsersSocket = {};
+
+io.on("connection", (socket) => {
+  socket.on("login", function (data) {
+    try {
+      var dacode = verifyToken(data);
+      socket.id = dacode.id;
+      global.UsersSocket[socket.id] = socket;
+      socket.emit("login", JSON.stringify({ islogin: true }));
+    } catch {
+      socket.emit("login", JSON.stringify({ islogin: false }));
+    }
+  });
+
+  socket.on("close", function () {
+    delete global.UsersSocket[socket.id];
+  });
+});
+
+server.listen(3000, () => {
   console.log("server run on 3000 port");
 });

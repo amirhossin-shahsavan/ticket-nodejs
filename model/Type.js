@@ -1,4 +1,3 @@
-const statusEnum = require("../utils/enum");
 const mongoose = require("mongoose");
 const ticketType = new mongoose.Schema(
   {

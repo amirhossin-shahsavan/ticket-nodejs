@@ -15,12 +15,11 @@ const islogin = require("./../middleware/isLogin");
 const isAdmin = require("./../middleware/isAdmin");
 
 const ticketRoutes = express.Router();
+ticketRoutes.get("/:id", islogin, getTicket);
 
 ticketRoutes.get("/category", islogin, getCategory);
 
 ticketRoutes.get("/", islogin, getallTicket);
-
-ticketRoutes.get("/:id", islogin, getTicket);
 
 ticketRoutes.post("/", islogin, createTicket);
 
