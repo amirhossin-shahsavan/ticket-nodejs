@@ -68,7 +68,7 @@ const createMessage = async (req, res, next) => {
         JSON.stringify(newMessage)
       );
     } catch {
-      next(appErr("new msg error ..."));
+      appErr("new msg error ...");
     }
 
     await Ticket.updateOne(
@@ -81,7 +81,7 @@ const createMessage = async (req, res, next) => {
       data: newMessage,
     });
   } catch (error) {
-    next(appErr(error.message));
+    appErr(error.message);
   }
 };
 
